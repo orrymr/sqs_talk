@@ -1,0 +1,61 @@
+Notes from Decouple and Scale ApplicationsUsing Amazon SQS and Amazon SNS on YouTube  https://www.youtube.com/watch?v=UesxWuZMZqI
+
+Been around for 10 + years. Microservices run at different speeds... this queue can buffer.
+
+queue - durable buffer for messages. Queue is a buffer between producers and consumers
+
+2 queues:
+	- Standard Queue (highyl scalable queues - scale as your topic grows!) 1- 100 000 msgs a second
+		- this performance comes at a cost
+		- Sometimes get a duplicated messages
+		- Messages can arrive out of order
+		- need to write application level code to deal with de-duplication/ order
+		- Standard queues provide best-effort ordering which ensures that messages are generally delivered in the same order as they are sent.
+	- FIFO queue
+		- limited throughput (not massively scalable)
+		- but, exactly once, ordered
+		- Ordered message processing: can I use multiple workers to work on perfectly ordered messages?
+			- If it's a single stream of ordered messages, then no - it needs to be a single worker (otherwise, how will the other workers know about the processing done?)
+			- to allow (get slide at 5.05) - use message groups. Messages belongign to same msg group will arrive in order
+		-  FIFO queues also support message groups that allow multiple ordered streams within a single queue. FIFO queues are limited to 300 transactions per second (TPS) per API action, but have all the capabilities of standard queues.
+
+Pub / Sub, using topics. 
+
+
+Use cases: 1) - Capacity mismatch (12:10) - database - use queue as a durable buffer. Queue in the middle absorbs all the extra traffic going into the system (limit on number of messages in queue? - No limit.
+			Limit is how long it can stay in the queue - 14 days! There have been instances of > 1 Billion messages in a queue)
+			- limit on sqs message sizes: 256kb - extended client for storage in S3 - gotta pay for storage on S3
+	   2) - Lambdas
+
+
+Cool demo (16 mins or so)
+
+Batch calls - drive the cost of using the service down (pay per request). 
+AsyncBufferedClient <- buffers for you. Gathers multiple calls to send a single batch request.
+
+defn: visibility timeout (amount of time that messages are locked after being read so they cannot be read again). Once a message has been returned by ReceiveMessage, it will not be returned by any other ReceiveMessage until the visibility timeout has passed. This keeps multiple consumers from processing the same message at once. If the system that processes messages successfully finishes working with this message, it calls DeleteMessage, which removes the message from the queue so no one else will ever process it. If this system fails to process the message, then it will be read by another ReceiveMessage call as soon as the visibility timeout passes. If you have associated a Dead Letter Queue with a source queue, messages will be moved to the Dead Letter Queue after the maximum number of delivery attempts you specify have been reached.
+
+Tasks options (like theia)
+	- Queue per worker - risky. If a queue goes down - there is nobody to process the items from that q
+	- Single queue for backlog items (our approach, recommended) - any worker can the process the item and complete it
+
+on 23 mins
+
+ - SNS
+
+
+ - Long Polling: 
+	- Have to keep calling receive. not nice.
+	- opposite: push. Risky. Overload.
+	- Long polling is in between. "I'm willing to wait, like 20 seconds". Cheap - one call per 20 seconds.
+	
+ - Server Side Encryption (easy)
+ - Dead letter queues. Edge cases. Errors. Bad message from producer. on Receiver, you fail to process. DLQ: specify policy for retrying; try up to 5 times, and if I fail move to a sideline queue, so I can inspect it later
+ - Cloudwatch - Easy Monitoring, use with DLQ for when to panic
+ - Notifcations for when S3 gets something
+
+
+
+
+
+Read this next: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/Welcome.html
