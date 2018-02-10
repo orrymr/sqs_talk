@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
+    compile group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.0.002'
 
     // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sqs
     compile group: 'com.amazonaws', name: 'aws-java-sdk-sqs', version: '1.11.274'

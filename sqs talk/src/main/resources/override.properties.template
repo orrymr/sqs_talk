@@ -1,0 +1,5 @@
+access_key_id={{put_your_key_here}}
+secret_key_id={{put_your_key_here}}
+
+#https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html
+#https://aws.amazon.com/blogs/security/wheres-my-secret-access-key/
