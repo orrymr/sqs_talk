@@ -1,3 +1,4 @@
+import Consumer.Consumer;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -27,6 +28,11 @@ public class Main {
 
 		Producer producer = new Producer(sqs);
 		producer.produce();
+
+		// Cons
+
+		Consumer consumer = new Consumer(sqs);
+		consumer.consume();
 
 	}
 }
