@@ -28,13 +28,13 @@ public class Main {
 		AmazonSQS sqs = new AmazonSQSClient(awsCreds);
 		sqs.setEndpoint(queueUrl);
 
-		if (args.length != 0 && args[0].equals("1")) {
+		if (args.length != 0 && args[0].equalsIgnoreCase("p")) {
 			Producer producer = new Producer(sqs);
 			producer.produce();
-		} else if (args.length != 0 && args[0].equals("2")) {
+		} else if (args.length != 0 && args[0].equalsIgnoreCase("c")) {
 			Consumer consumer = new Consumer(sqs);
 			consumer.consume(queueUrl);
-		} else if (args.length != 0 && args[0].equals("3")) {
+		} else if (args.length != 0 && args[0].equalsIgnoreCase("s")) {
 			Statistician statistician = new Statistician(sqs);
 			statistician.getStats(queueUrl);
 		} else
