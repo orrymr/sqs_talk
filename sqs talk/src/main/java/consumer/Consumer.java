@@ -1,4 +1,4 @@
-package Consumer;
+package consumer;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
@@ -13,8 +13,8 @@ public class Consumer {
 		this.sqs = sqs;
 	}
 
-	public void consume(){
-		ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest("https://sqs.us-east-1.amazonaws.com/771412604156/sqs_talk_queue");
+	public void consume(String queueUrl){
+		ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl);
 
 		List<Message> sqsJobs = sqs.receiveMessage(receiveMessageRequest).getMessages();
 
