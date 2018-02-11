@@ -15,8 +15,8 @@ public class Statistician {
 		GetQueueAttributesRequest getQueueAttributesRequest = new GetQueueAttributesRequest(queueUrl)
 				.withAttributeNames("All");
 		GetQueueAttributesResult getQueueAttributesResult = sqs.getQueueAttributes(getQueueAttributesRequest);
-		System.out.println(getQueueAttributesResult.getAttributes().get("ApproximateNumberOfMessages"));
-		System.out.println(getQueueAttributesResult.getAttributes().get("ApproximateNumberOfMessagesNotVisible"));
+		System.out.println(String.format("The number of messages on the queue: %s", getQueueAttributesResult.getAttributes().get("ApproximateNumberOfMessages")));
+		System.out.println(String.format("The number of messages in flight: %s", getQueueAttributesResult.getAttributes().get("ApproximateNumberOfMessagesNotVisible")));
 	}
 
 }
