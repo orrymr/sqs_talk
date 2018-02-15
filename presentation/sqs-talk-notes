@@ -11,6 +11,7 @@ queue - durable buffer for messages. Queue is a buffer between producers and con
 		- Messages can arrive out of order
 		- need to write application level code to deal with de-duplication/ order
 		- Standard queues provide best-effort ordering which ensures that messages are generally delivered in the same order as they are sent.
+		- standard queues are designed to be massively scalable using a highly distributed architecture, receiving messages in the exact order they are sent is not guaranteed.
 	- FIFO queue
 		- limited throughput (not massively scalable)
 		- but, exactly once, ordered
@@ -18,6 +19,13 @@ queue - durable buffer for messages. Queue is a buffer between producers and con
 			- If it's a single stream of ordered messages, then no - it needs to be a single worker (otherwise, how will the other workers know about the processing done?)
 			- to allow (get slide at 5.05) - use message groups. Messages belongign to same msg group will arrive in order
 		-  FIFO queues also support message groups that allow multiple ordered streams within a single queue. FIFO queues are limited to 300 transactions per second (TPS) per API action, but have all the capabilities of standard queues.
+		- https://sookocheff.com/post/messaging/dissecting-sqs-fifo-queues/
+
+
+FIFO - banking transactions in the correct order
+	- $0.50 cents per million API requests (first million monthly requests are free)
+	- Not all regions
+Standard Queues - 
 
 Pub / Sub, using topics. 
 
@@ -59,3 +67,28 @@ on 23 mins
 
 
 Read this next: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/Welcome.html
+
+
+
+: How is Amazon SQS different from Amazon SNS?
+
+Amazon Simple Queue Service (SQS) and Amazon SNS are both messaging services within AWS, which provide different benefits for developers. Amazon SNS allows applications to send time-critical messages to multiple subscribers through a “push” mechanism, eliminating the need to periodically check or “poll” for updates. Amazon SQS is a message queue service used by distributed applications to exchange messages through a polling model, and can be used to decouple sending and receiving components. Amazon SQS provides flexibility for distributed components of applications to send and receive messages without requiring each component to be concurrently available.
+
+A common pattern is to use SNS to publish messages to Amazon SQS queues to reliably send messages to one or many system components asynchronously. For more details, see What is Pub/Sub Messaging?
+
+
+
+
+How Is Amazon MQ Different from Amazon SQS or Amazon SNS?
+Amazon MQ is a managed message broker service that provides compatibility with many popular message brokers. We recommend Amazon MQ for migrating applications from existing message brokers that rely on compatibility with APIs such as JMS or protocols such as AMQP, MQTT, OpenWire, and STOMP.
+
+Amazon SQS and Amazon SNS are queue and topic services that are highly scalable, simple to use, and don't require you to set up message brokers. We recommend these services for new applications that can benefit from nearly unlimited scalability and simple APIs.
+
+--------------
+https://aws.amazon.com/pub-sub-messaging/ <---------- NB
+https://developer.ibm.com/clouddataservices/2015/12/03/get-in-line-an-intro-to-queues-and-pubsub/ <------ Not so NB, but worth a read
+
+
+Due to the distributed nature of the queue, a weighted random set of machines is sampled on a ReceiveMessage call. That means only the messages on the sampled machines are returned. If the number of messages in the queue is small (less than 1000), it is likely you will get fewer messages than you requested per ReceiveMessage call. If the number of messages in the queue is extremely small, you might not receive any messages in a particular ReceiveMessage response; in which case you should repeat the request. REF https://stackoverflow.com/questions/9959687/retrieve-multiple-messages-from-sqs
+
+
