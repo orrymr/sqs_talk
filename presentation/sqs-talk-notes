@@ -27,7 +27,7 @@ FIFO - banking transactions in the correct order
 	- Not all regions
 Standard Queues - 
 
-Pub / Sub, using topics. 
+Pub / Sub, using topics (SNS). 
 
 
 Use cases: 1) - Capacity mismatch (12:10) - database - use queue as a durable buffer. Queue in the middle absorbs all the extra traffic going into the system (limit on number of messages in queue? - No limit.
@@ -52,9 +52,9 @@ on 23 mins
  - SNS
 
 
- - Long Polling: 
+ - Long Polling (25 mins): 
 	- Have to keep calling receive. not nice.
-	- opposite: push. Risky. Overload.
+	- opposite: push - if there is message in the queue, then call me so I (the consumer) can process message. Risky - huge traffic. Overloaded by notification about messages in the queue. - 
 	- Long polling is in between. "I'm willing to wait, like 20 seconds". Cheap - one call per 20 seconds.
 	
  - Server Side Encryption (easy)
@@ -86,6 +86,9 @@ Amazon SQS and Amazon SNS are queue and topic services that are highly scalable,
 
 --------------
 https://aws.amazon.com/pub-sub-messaging/ <---------- NB
+	Pub/sub - message gets processed by multiple subscribers. The subscribers to the message topic often perform different functions, and can each do something different with the message in parallel.
+	Message queue - what we use. Many producers and consumers can use the queue, but each message is processed only once, by a single consumer.  
+
 https://developer.ibm.com/clouddataservices/2015/12/03/get-in-line-an-intro-to-queues-and-pubsub/ <------ Not so NB, but worth a read
 
 
